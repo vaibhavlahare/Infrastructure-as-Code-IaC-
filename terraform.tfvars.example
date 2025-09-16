@@ -1,8 +1,0 @@
-# Copy this file to terraform.tfvars and update values
-
-aws_region       = "ap-south-1"
-allowed_ssh_cidr = "YOUR_IP/32" # change to your IP
-s3_bucket_name   = "your-unique-bucket-name-12345"
-asg_min_size     = 1
-asg_max_size     = 2
-asg_desired_capacity = 1
