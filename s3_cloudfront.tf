@@ -1,51 +1,41 @@
 resource "aws_s3_bucket" "static" {
-  bucket = var.s3_bucket_name
+  bucket = "${var.project}-static-bucket"
 
-  tags = { Name = "tf-iac-static-bucket" }
-}
-
-resource "aws_s3_bucket_ownership_controls" "example" {
-  bucket = aws_s3_bucket.static.id
-
-  rule {
-    object_ownership = "BucketOwnerPreferred"
+  tags = {
+    Name = "${var.project}-s3"
   }
 }
 
-resource "aws_s3_bucket_acl" "example" {
-  depends_on = [aws_s3_bucket_ownership_controls.example]
-  bucket     = aws_s3_bucket.static.id
-  acl        = "private"
+resource "aws_s3_bucket_versioning" "static_versioning" {
+  bucket = aws_s3_bucket.static.id
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
-resource "aws_s3_bucket_policy" "static_policy" {
-  bucket = aws_s3_bucket.static.id
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = "*",
-        Action = "s3:GetObject",
-        Resource = "${aws_s3_bucket.static.arn}/*"
-      }
-    ]
-  })
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "OAI for ${var.project}"
 }
 
 resource "aws_cloudfront_distribution" "cdn" {
-  origin {
-    domain_name = aws_s3_bucket.static.bucket_regional_domain_name
-    origin_id   = "s3-static-origin"
-  }
-
   enabled             = true
   default_root_object = "index.html"
 
+  origin {
+    domain_name = aws_s3_bucket.static.bucket_regional_domain_name
+    origin_id   = "s3-${aws_s3_bucket.static.id}"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+    }
+  }
+
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "s3-static-origin"
+    target_origin_id       = "s3-${aws_s3_bucket.static.id}"
+    viewer_protocol_policy = "redirect-to-https"
+
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
 
     forwarded_values {
       query_string = false
@@ -53,11 +43,7 @@ resource "aws_cloudfront_distribution" "cdn" {
         forward = "none"
       }
     }
-
-    viewer_protocol_policy = "redirect-to-https"
   }
-
-  price_class = var.cloudfront_price_class
 
   restrictions {
     geo_restriction {
@@ -69,5 +55,7 @@ resource "aws_cloudfront_distribution" "cdn" {
     cloudfront_default_certificate = true
   }
 
-  tags = { Name = "tf-iac-cdn" }
+  tags = {
+    Name = "${var.project}-cdn"
+  }
 }

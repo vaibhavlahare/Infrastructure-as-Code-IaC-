@@ -30,17 +30,57 @@ variable "instance_type" {
   default = "t3.micro"
 }
 
-variable "asg_min_size" { type = number default = 1 }
-variable "asg_max_size" { type = number default = 3 }
-variable "asg_desired_capacity" { type = number default = 1 }
+variable "asg_min_size" {
+  type    = number
+  default = 1
+}
 
-variable "db_name" { type = string default = "appdb" }
-variable "db_username" { type = string default = "admin" }
-variable "db_instance_class" { type = string default = "db.t3.micro" }
-variable "db_allocated_storage" { type = number default = 20 }
-variable "db_engine_version" { type = string default = "8.0" }
-variable "db_multi_az" { type = bool default = false }
+variable "asg_max_size" {
+  type    = number
+  default = 3
+}
 
-variable "s3_bucket_name" { type = string default = "terraform-iac-static-bucket-example-12345" }
+variable "asg_desired_capacity" {
+  type    = number
+  default = 1
+}
 
-variable "cloudfront_price_class" { type = string default = "PriceClass_100" }
+variable "db_name" {
+  type    = string
+  default = "appdb"
+}
+
+variable "db_username" {
+  type    = string
+  default = "admin"
+}
+
+variable "db_instance_class" {
+  type    = string
+  default = "db.t3.micro"
+}
+
+variable "db_allocated_storage" {
+  type    = number
+  default = 20
+}
+
+variable "db_engine_version" {
+  type    = string
+  default = "8.0"
+}
+
+variable "db_multi_az" {
+  type    = bool
+  default = false
+}
+
+variable "s3_bucket_name" {
+  type    = string
+  default = "terraform-iac-static-bucket-example-12345"
+}
+
+variable "cloudfront_price_class" {
+  type    = string
+  default = "PriceClass_100"
+}
