@@ -17,19 +17,18 @@ resource "aws_launch_template" "app" {
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "asg" {
-  desired_capacity     = var.desired_capacity
-  max_size             = var.max_size
-  min_size             = var.min_size
-  vpc_zone_identifier  = aws_subnet.public[*].id
+  desired_capacity    = var.desired_capacity
+  max_size            = var.max_size
+  min_size            = var.min_size
+  vpc_zone_identifier = aws_subnet.public[*].id
   launch_template {
     id      = aws_launch_template.app.id
     version = "$Latest"
   }
-  tags = [
-    {
-      key                 = "Name"
-      value               = "${var.project}-asg"
-      propagate_at_launch = true
-    }
-  ]
+
+  tag {
+    key                 = "Name"
+    value               = "${var.project}-asg"
+    propagate_at_launch = true
+  }
 }
