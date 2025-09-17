@@ -1,11 +1,8 @@
-# Launch Template
-resource "aws_launch_template" "app" {
+ resource "aws_launch_template" "app" {
   name_prefix   = "${var.project}-lt-"
   image_id      = var.ami_id
   instance_type = var.instance_type
-
-  # Use security_group_ids instead of names
-  security_group_ids = [aws_security_group.ec2_sg.id]
+  security_group_names = [aws_security_group.ec2_sg.name]
 
   user_data = base64encode(<<-EOT
               #!/bin/bash
@@ -18,16 +15,16 @@ resource "aws_launch_template" "app" {
   )
 }
 
+
 # Auto Scaling Group
 resource "aws_autoscaling_group" "asg" {
   desired_capacity    = var.desired_capacity
   max_size            = var.max_size
   min_size            = var.min_size
-  vpc_zone_identifier = aws_subnet.public[*].id  # must be in same VPC as SG
-
+  vpc_zone_identifier = aws_subnet.public[*].id
   launch_template {
     id      = aws_launch_template.app.id
-    version = "$Latest"   # Terraform will pick latest LT version
+    version = "$Latest"
   }
 
   tag {
