@@ -1,12 +1,12 @@
-# S3 Bucket
-resource "aws_s3_bucket" "bucket" {
-  bucket = var.s3_bucket_name
-  acl    = "public-read"
-
-  tags = {
-    Name = var.s3_bucket_name
-  }
+ resource "aws_s3_bucket" "bucket" {
+  bucket = "my-bucket"
 }
+
+resource "aws_s3_bucket_acl" "bucket_acl" {
+  bucket = aws_s3_bucket.bucket.id
+  acl    = "public-read"
+}
+
 
 # S3 Website Configuration (separate resource)
 resource "aws_s3_bucket_website_configuration" "bucket_website" {

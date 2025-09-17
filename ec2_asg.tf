@@ -1,19 +1,20 @@
-# Launch Template
-resource "aws_launch_template" "app" {
+ resource "aws_launch_template" "app" {
   name_prefix   = "${var.project}-lt-"
   image_id      = var.ami_id
   instance_type = var.instance_type
   security_group_names = [aws_security_group.ec2_sg.name]
 
-  user_data = <<-EOF
+  user_data = base64encode(<<-EOT
               #!/bin/bash
               yum update -y
               yum install -y httpd
               systemctl start httpd
               systemctl enable httpd
               echo "<h1>Terraform EC2 Instance</h1>" > /var/www/html/index.html
-              EOF
+              EOT
+  )
 }
+
 
 # Auto Scaling Group
 resource "aws_autoscaling_group" "asg" {
