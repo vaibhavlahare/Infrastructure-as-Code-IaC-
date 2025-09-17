@@ -1,14 +1,21 @@
- resource "aws_s3_bucket" "bucket" {
-  bucket = "my-bucket"
+# Provider
+provider "aws" {
+  region = "us-east-1"
 }
 
+# S3 Bucket
+resource "aws_s3_bucket" "bucket" {
+  bucket        = "my-bucket"
+  force_destroy = true   # optional: allows deleting non-empty bucket
+}
+
+# S3 Bucket ACL
 resource "aws_s3_bucket_acl" "bucket_acl" {
   bucket = aws_s3_bucket.bucket.id
   acl    = "public-read"
 }
 
-
-# S3 Website Configuration (separate resource)
+# S3 Website Configuration
 resource "aws_s3_bucket_website_configuration" "bucket_website" {
   bucket = aws_s3_bucket.bucket.id
 
