@@ -1,5 +1,5 @@
  resource "aws_s3_bucket" "bucket" {
-  bucket = "my-bucket"
+  bucket = "my-bucket-1"
 }
 
 resource "aws_s3_bucket_acl" "bucket_acl" {

@@ -81,3 +81,6 @@ variable "s3_bucket_name" {
   type        = string
   default     = "iac-advanced-bucket"
 }
+variable "availability_zones" {
+  default = ["us-east-1a", "us-east-1b"]
+}
